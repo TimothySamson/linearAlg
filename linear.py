@@ -1,3 +1,5 @@
+from fractions import Fraction as Frac
+
 class Vector:
     def __init__(self, array):
         self.array = array.copy()
@@ -15,8 +17,11 @@ class Vector:
         return self + (-1) * vect2
 
     def __mul__(self, num):
+        # Dot Product if vecror, scalar mult if num
         if isinstance(num, Vector):
-            raise ValueError("Multiplied 2 vectors together")
+            if len(self) != len(num):
+                raise ValueError("dot product error: len mismatch")
+            return sum([num[i] * self[i] for i in range(len(self))])
         return Vector([num * x for x in self.array])
 
     def __len__(self):
@@ -62,18 +67,70 @@ class Matrix:
         return Matrix(self.array)
             
     def __str__(self):
-        return "\n".join([str(row) for row in self.array])
+        return "\n".join([str(row) for row in self])
 
     def __getitem__(self, index):
         return self.array[index]
+
+    def fracStr(self):
+        matrix = self.copy()
+        string = ""
+        newRow = []
+        for row in matrix:
+            row = [Frac(x).limit_denominator() for x in row]
+            for x in row:
+                if x.numerator == 0:
+                    newRow.append("0")
+                    continue
+                if x.denominator == 1:
+                    newRow.append(str(x.numerator))
+                    continue
+                
+                newRow.append(f"{x.numerator}/{x.denominator}")
+            
+            string += str(newRow) + "\n"
+            newRow = []
+        return string
+
+    def getCol(self, num):
+        return Vector([row[num] for row in self])
+
+    def __mul__(self, matrix2):
+        if self.colNum() != matrix2.rowNum():
+            raise ValueError("mult matrix error: dim mismatch")
         
+        matrix1 = self
+
+        newArray = []
+        row = []
+        for i in range(matrix1.rowNum()):
+            for j in range(matrix2.colNum()):
+                row.append(matrix1[i] * matrix2.getCol(j))
+
+            newArray.append(row)
+            row = []
+
+        return Matrix(newArray)
+
+    def __add__(self, matrix2):
+        if self.rowNum() != matrix2.rowNum():
+            raise ValueError("adding matrix error: row mismatch")
+        if self.colNum() != matrix2.colNum():
+            raise ValueError("adding matrix error: column mismatch")
+        
+        newArray = []
+        for i in range(self.rowNum()):
+            newArray.append(self[i] + matrix2[i])
+
+        return Matrix(newArray)
+
 def ref(matrix):
     matrix = matrix.copy()
     for i in range(matrix.rowNum()):
         pivot = matrix.array[i][i]
 
         # Finds a non-zero num on the same column, and swaps if it finds it
-        if pivot == 0:
+        if Frac(pivot).limit_denominator().numerator == 0:
             for j in range(i+1, matrix.rowNum()):
                 if matrix.array[j][i] != 0:
                     matrix.swapRow(j, i)
@@ -82,7 +139,7 @@ def ref(matrix):
         # if the pivot is still zero, then that must mean there is no nonzero 
         # num in the column, so skip it
         pivot = matrix.array[i][i]
-        if pivot == 0:
+        if Frac(pivot).limit_denominator().numerator == 0:
             continue
         
         # Make current row have a pivot of zero
@@ -104,12 +161,4 @@ def backSubstitute(matrix):
             # print (i, j)
 
     return matrix
-
-matrix = [
-[1,2,3,4],
-[2,6,7,8],
-[3,3,4,5]]
-
-matrix = Matrix(matrix)
-print(backSubstitute(ref(matrix)))
 
