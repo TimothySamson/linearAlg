@@ -2,7 +2,7 @@ import time
 
 def main(string, depth):
     print("-" * depth + " " + str(depth) + " " + string)
-    if depth == 10:
+    if depth == 6:
         return 
     
     depth += 1

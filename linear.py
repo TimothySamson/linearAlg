@@ -130,7 +130,7 @@ def ref(matrix):
         pivot = matrix.array[i][i]
 
         # Finds a non-zero num on the same column, and swaps if it finds it
-        if Frac(pivot).limit_denominator().numerator == 0:
+        if pivot == 0:
             for j in range(i+1, matrix.rowNum()):
                 if matrix.array[j][i] != 0:
                     matrix.swapRow(j, i)
@@ -139,7 +139,7 @@ def ref(matrix):
         # if the pivot is still zero, then that must mean there is no nonzero 
         # num in the column, so skip it
         pivot = matrix.array[i][i]
-        if Frac(pivot).limit_denominator().numerator == 0:
+        if pivot == 0:
             continue
         
         # Make current row have a pivot of zero
@@ -151,11 +151,12 @@ def ref(matrix):
 
     return matrix
 
-# Assuming all pivots are one
 def backSubstitute(matrix):
     matrix = matrix.copy()
 
     for i in range(matrix.rowNum() - 1, 0, -1):
+        if matrix[i][i] == 0:
+            continue
         for j in range(i - 1, -1, -1):
             matrix.array[j] = matrix[j] - matrix[i] * matrix[j][i]
             # print (i, j)
