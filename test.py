@@ -78,3 +78,50 @@ print(matrix1 * matrix2)
 
 print("Transpose")
 print(Matrix(([[1, 2, 3, 4]])).transpose())
+
+print(Matrix([
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [2, 3, 4, 5]]).minor(2, 0))
+
+print(Matrix([
+    [1, 4, 7],
+    [3, 0, 5],
+    [-1, 9 ,11]
+]).cofactor())
+
+print(Matrix([
+    [1, 4],
+    [-1, 9]
+]).det())
+
+M = Matrix([
+    [1, 4, 7],
+    [3, 0, 5],
+    [-1, 9 ,11]
+])
+print(M.inverse() * M)
+
+A = Matrix([
+    [-3, -2],
+    [2, 1]
+])
+B = Matrix([
+    [4, 1],
+    [13, -2]
+])
+
+print (A.inverse())
+
+A = Matrix([
+    [-5, 0, 0],
+    [0, 2, 0],
+    [0, 0, 5]
+])
+print(A * A)
+
+print(Matrix([
+    [1, 3, 5],
+    [0, -3, 6],
+    [5, 1, 5]
+]).trace())

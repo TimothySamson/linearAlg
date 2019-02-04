@@ -1,6 +1,6 @@
 from fractions import Fraction as Frac
-from functionsMixin import functionMixin
-from rrefMixin import rrefMixin
+from mixins.functionsMixin import functionMixin
+from mixins.rrefMixin import rrefMixin
 
 class Vector:
     def __init__(self, array):
