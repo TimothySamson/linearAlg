@@ -1,4 +1,6 @@
 from fractions import Fraction as Frac
+from functionsMixin import functionMixin
+from rrefMixin import rrefMixin
 
 class Vector:
     def __init__(self, array):
@@ -7,14 +9,10 @@ class Vector:
     def __add__(self, vect2):
         if len(vect2) != len(self):
             raise ValueError("Adding vectors with different dims")
+        
+        return Vector([self.array[i] + vect2.array[i] 
+            for i in range(len(vect2))])
 
-        newArray = []
-        for i in range(len(vect2)):
-            newArray.append(self.array[i] + vect2.array[i])
-
-        return Vector(newArray)
-    def __sub__(self, vect2):
-        return self + (-1) * vect2
 
     def __mul__(self, num):
         # Dot Product if vecror, scalar mult if num
@@ -23,6 +21,9 @@ class Vector:
                 raise ValueError("dot product error: len mismatch")
             return sum([num[i] * self[i] for i in range(len(self))])
         return Vector([num * x for x in self.array])
+
+    def __sub__(self, vect2):
+        return self + -vect2
 
     def __len__(self):
         return len(self.array)
@@ -39,10 +40,13 @@ class Vector:
     def __getitem__(self, index):
         return self.array[index]
 
+    def __neg__(self):
+        return Vector([-x for x in self])
+
     def copy(self):
         return self.array.copy()
 
-class Matrix:
+class Matrix(functionMixin, rrefMixin):
     def __init__(self, array):
         dim = len(array[0])
         newArray = []
@@ -67,10 +71,11 @@ class Matrix:
         return Matrix(self.array)
             
     def __str__(self):
-        return "\n".join([str(row) for row in self])
+        return "\n".join([str(row) for row in self]) + "\n"
 
     def __getitem__(self, index):
         return self.array[index]
+
 
     def fracStr(self):
         matrix = self.copy()
@@ -96,21 +101,31 @@ class Matrix:
         return Vector([row[num] for row in self])
 
     def __mul__(self, matrix2):
-        if self.colNum() != matrix2.rowNum():
-            raise ValueError("mult matrix error: dim mismatch")
-        
-        matrix1 = self
+        if isinstance(matrix2, Matrix):
+            if self.colNum() != matrix2.rowNum():
+                raise ValueError("mult matrix error: dim mismatch")
+            
+            matrix1 = self
 
-        newArray = []
-        row = []
-        for i in range(matrix1.rowNum()):
-            for j in range(matrix2.colNum()):
-                row.append(matrix1[i] * matrix2.getCol(j))
-
-            newArray.append(row)
+            newArray = []
             row = []
+            for i in range(matrix1.rowNum()):
+                for j in range(matrix2.colNum()):
+                    row.append(matrix1[i] * matrix2.getCol(j))
 
-        return Matrix(newArray)
+                newArray.append(row)
+                row = []
+
+            return Matrix(newArray)
+        else:
+            obj = matrix2
+            return Matrix([[x * obj 
+                            for x in row]
+                            for row in self])
+
+    def __rmul__(self, obj):
+        return self * obj
+
 
     def __add__(self, matrix2):
         if self.rowNum() != matrix2.rowNum():
@@ -124,42 +139,6 @@ class Matrix:
 
         return Matrix(newArray)
 
-def ref(matrix):
-    matrix = matrix.copy()
-    for i in range(matrix.rowNum()):
-        pivot = matrix.array[i][i]
-
-        # Finds a non-zero num on the same column, and swaps if it finds it
-        if pivot == 0:
-            for j in range(i+1, matrix.rowNum()):
-                if matrix.array[j][i] != 0:
-                    matrix.swapRow(j, i)
-                    break
-        
-        # if the pivot is still zero, then that must mean there is no nonzero 
-        # num in the column, so skip it
-        pivot = matrix.array[i][i]
-        if pivot == 0:
-            continue
-        
-        # Make current row have a pivot of zero
-        matrix.array[i] = matrix.array[i] / pivot
-        
-        # Make all other rows zero
-        for j in range(i+1, matrix.rowNum()):
-            matrix.array[j] = matrix[j] - matrix[i] * matrix[j][i]
-
-    return matrix
-
-def backSubstitute(matrix):
-    matrix = matrix.copy()
-
-    for i in range(matrix.rowNum() - 1, 0, -1):
-        if matrix[i][i] == 0:
-            continue
-        for j in range(i - 1, -1, -1):
-            matrix.array[j] = matrix[j] - matrix[i] * matrix[j][i]
-            # print (i, j)
-
-    return matrix
+    def __sub__(self, matrix2):
+        return self + -1*matrix2
 

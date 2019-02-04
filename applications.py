@@ -7,7 +7,7 @@ def polynomial(points):
     matrix = [[point[0] ** i for i in range(rowLen)] + [point[1]] 
              for point in points]
     matrix = Matrix(matrix)
-    return backSubstitute(ref(matrix))
+    return matrix.rref()
 
 # List of lists
 # Solving the equation nodes[0] = 0, nodes[1] = 0, ...
@@ -58,18 +58,18 @@ matrix = flow([
 [300, "-x2", "-x3", "-x5"],
 ["x5", "x4", -100]
     ])
-print(backSubstitute(ref(matrix)))
+print(matrix.rref())
 print("\n")
 
 print("Problem 2")
 matrix = flow([
 ["x2", 400, "-x1"],
-[200, "x1", "-x3"],
-["x3", -400, "-x4"],
-["x4", "-x2", -200]])
-print(matrix)
-print("\n")
-print(backSubstitute(ref(matrix)))
+[100, "x1", "-x3"],
+["x3", -400, 0],
+[0, "-x2", -100]])
+# print(matrix)
+# print("\n")
+print(matrix.rref())
 print("\n")
 
 print("Problem 3")
@@ -84,7 +84,7 @@ matrix = flow([
     ])
 print(matrix)
 print("\n")
-print(backSubstitute(ref(matrix)))
+print(matrix.rref())
 print("\n")
 
 # Problem 3
@@ -113,7 +113,7 @@ matrix = flow([
 
 print(matrix)
 print("\n")
-print(backSubstitute(ref(matrix)))
+print(matrix.rref())
 print("\n")
 
 # [1.0, 0.0, 0.0, 0.0]
