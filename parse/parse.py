@@ -16,14 +16,23 @@ def html2matrix(string):
             matrixRow = []
             for data in row.findChildren("td", recursive=False):
                 if "watexmatrixparen" not in data["class"]:
-                    num = data.getText().strip()
-                    if num[0] in "-−":
-                        num = -float(num[1:])
-                    num = float(num)
-                    matrixRow.append(num)
+                    try:
+                        num = data.getText().strip()
+                        if num[0] in "-−":
+                            num = -float(num[1:])
+                        num = float(num)
+                        matrixRow.append(num)
+                    except Exception:
+                        continue
             matrix.append(matrixRow)
+        
+        if not matrix[0]:
+            continue
 
-        matrices.append(Matrix(matrix))
+        try:
+            matrices.append(Matrix(matrix))
+        except:
+            continue
 
     return matrices
 

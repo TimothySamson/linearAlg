@@ -1,4 +1,5 @@
 from fractions import Fraction as Frac
+from numbers import Number
 from mixins.functionsMixin import functionMixin
 from mixins.rrefMixin import rrefMixin
 
@@ -141,4 +142,26 @@ class Matrix(functionMixin, rrefMixin):
 
     def __sub__(self, matrix2):
         return self + -1*matrix2
+
+    def __pow__(self, num):
+        if num == 1:
+            return self
+
+        if not isinstance(num, Number):
+            raise ValueError("Matrix exp by non number")
+
+        if Frac(num).denominator != 1:
+            raise ValueError("Matrix exp by non integer")
+
+        num = int(num)
+        if num < 0:
+            return self.inverse() ** abs(num)
+        else: 
+            return self * self ** (num - 1)
+            
+    
+    def __truediv__(self, obj):
+        return self * obj ** (-1)
+
+
 
