@@ -141,3 +141,10 @@ B = Matrix([
 print(((3*A - 2*B)).fracStr())
 
 
+print(elemSwap(3, 1, 2))
+print(elemAdd(3, 1, 2))
+print(elemAdd(3, 1, 2, 3))
+print(elemMul(3, 1, 3))
+
+mList = (refElemList(Matrix([[0, 1], [9, 18]])))
+print(mList)

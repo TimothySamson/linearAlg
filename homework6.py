@@ -76,3 +76,5 @@ print(A **-1 *  Matrix([[-1, -3, 3]]).transpose() )
 
 probno(16)
 print((M[14] * 4).inverse() )
+
+

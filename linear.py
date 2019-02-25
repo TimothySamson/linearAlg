@@ -68,6 +68,9 @@ class Matrix(functionMixin, rrefMixin):
     def swapRow(self, x, y):
         self.array[x], self.array[y] = self.array[y], self.array[x]
 
+    def __setitem__(self, row, vect):
+        self.array[row] = Vector(vect)
+
     def copy(self):
         return Matrix(self.array)
             
@@ -80,9 +83,9 @@ class Matrix(functionMixin, rrefMixin):
 
     def fracStr(self):
         matrix = self.copy()
-        string = ""
-        newRow = []
+        strList = []
         for row in matrix:
+            newRow = []
             row = [Frac(x).limit_denominator() for x in row]
             for x in row:
                 if x.numerator == 0:
@@ -94,9 +97,8 @@ class Matrix(functionMixin, rrefMixin):
                 
                 newRow.append(f"{x.numerator}/{x.denominator}")
             
-            string += str(newRow) + "\n"
-            newRow = []
-        return string
+            strList.append((newRow))
+        return strList
 
     def getCol(self, num):
         return Vector([row[num] for row in self])
@@ -163,5 +165,4 @@ class Matrix(functionMixin, rrefMixin):
     def __truediv__(self, obj):
         return self * obj ** (-1)
 
-
-
+from misc.misc import *
